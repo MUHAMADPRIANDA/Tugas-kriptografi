@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cipher Program</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        .error {
+            color: red;
+        }
+        .download-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Encryption and Decryption</h1>
+
+    <form action="/" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="method">Pilih Metode:</label>
+            <select name="method" id="method">
+                <option value="1">Vigenere Cipher</option>
+                <option value="2">Playfair Cipher</option>
+                <option value="3">Extended Vigenere Cipher</option>
+                <option value="4">Affine Cipher</option>
+                <option value="5">Hill Cipher</option>
+            </select>
+        </div>
+    
+        <div class="form-group">
+            <label for="mode">Pilih Mode:</label>
+            <select name="mode" id="mode">
+                <option value="encrypt">Enkripsi</option>
+                <option value="decrypt">Dekripsi</option>
+            </select>
+        </div>
+    
+        <div class="form-group">
+            <label for="text">Teks:</label>
+            <textarea name="text" id="text"></textarea>
+        </div>
+    
+        <div class="form-group">
+            <label for="key">Kunci:</label>
+            <input type="text" name="key" id="key">
+        </div>
+    
+        <div class="form-group">
+            <label for="file">Upload File:</label>
+            <input type="file" name="file" id="file">
+        </div>
+        
+        <div class="form-group">
+            <label for="format">Format Hasil (untuk text):</label>
+            <select name="format" id="format">
+                <option value="none">Tanpa Formatting</option>
+                <option value="no_spaces">Tanpa Spasi</option>
+                <option value="groups">Kelompok 5-huruf</option>
+            </select>
+        </div>
+    
+        <button type="submit">Proses</button>
+    </form>
+    
+    {% if result %}
+        <div class="result">
+            <h3>Hasil:</h3>
+            <p>{{ result }}</p>
+            
+            {% if formatted_result %}
+                <h4>Hasil Terformat:</h4>
+                <p>{{ formatted_result }}</p>
+            {% endif %}
+            
+            {% if download_link %}
+                <a href="{{ download_link }}" class="download-link">Download Hasil</a>
+            {% endif %}
+        </div>
+    {% endif %}
+    
+    {% if error %}
+        <div class="result error">
+            <h3>Error:</h3>
+            <p>{{ error }}</p>
+        </div>
+    {% endif %}
+</body>
+</html>
