@@ -1,118 +1,231 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cipher Program</title>
+    <title>Enkripsi & Dekripsi Cipher</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
         }
-        .form-group {
-            margin-bottom: 15px;
+
+        .container {
+            max-width: 100%;
+            width: 80%;
+            margin-top: 50px;
+            padding: 40px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e1e1e1;
+            box-sizing: border-box;
         }
+
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #0056b3;
+            font-weight: bold;
+        }
+
         label {
-            display: block;
-            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 1rem;
+            color: #495057;
         }
-        textarea {
+
+        .form-control {
+            border-radius: 5px;
+            padding: 12px;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group select, .form-group input, .form-group textarea {
+            background-color: #f8f9fa;
+            border-color: #ced4da;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 14px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
             width: 100%;
-            height: 100px;
         }
-        .result {
-            margin-top: 20px;
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+        .alert {
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .mt-4 {
+            margin-top: 2rem;
+        }
+
+        pre {
+            background-color: #f7f7f7;
             padding: 15px;
-            background-color: #f0f0f0;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border: 1px solid #ddd;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            font-size: 1.1rem;
+            width: 100%;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-control:focus {
+            background-color: #ffffff;
+            border-color: #80bdff;
+            box-shadow: 0 0 8px rgba(38, 143, 255, 0.5);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            color: #333;
+        }
+
+        /* Styling for input file */
+        .custom-file-input {
             border-radius: 5px;
         }
-        .error {
-            color: red;
-        }
-        .download-link {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 15px;
-            background-color: #4CAF50;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 20px;
+                margin-top: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .btn-primary, .btn-success {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Encryption and Decryption</h1>
-
-    <form action="/" method="POST" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="method">Pilih Metode:</label>
-            <select name="method" id="method">
-                <option value="1">Vigenere Cipher</option>
-                <option value="2">Playfair Cipher</option>
-                <option value="3">Extended Vigenere Cipher</option>
-                <option value="4">Affine Cipher</option>
-                <option value="5">Hill Cipher</option>
-            </select>
-        </div>
-    
-        <div class="form-group">
-            <label for="mode">Pilih Mode:</label>
-            <select name="mode" id="mode">
-                <option value="encrypt">Enkripsi</option>
-                <option value="decrypt">Dekripsi</option>
-            </select>
-        </div>
-    
-        <div class="form-group">
-            <label for="text">Teks:</label>
-            <textarea name="text" id="text"></textarea>
-        </div>
-    
-        <div class="form-group">
-            <label for="key">Kunci:</label>
-            <input type="text" name="key" id="key">
-        </div>
-    
-        <div class="form-group">
-            <label for="file">Upload File:</label>
-            <input type="file" name="file" id="file">
-        </div>
+    <div class="container">
+        <h1>Enkripsi & Dekripsi Cipher</h1>
         
-        <div class="form-group">
-            <label for="format">Format Hasil (untuk text):</label>
-            <select name="format" id="format">
-                <option value="none">Tanpa Formatting</option>
-                <option value="no_spaces">Tanpa Spasi</option>
-                <option value="groups">Kelompok 5-huruf</option>
-            </select>
+        <!-- Error Message -->
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+            {{ error }}
         </div>
-    
-        <button type="submit">Proses</button>
-    </form>
-    
-    {% if result %}
-        <div class="result">
-            <h3>Hasil:</h3>
-            <p>{{ result }}</p>
-            
-            {% if formatted_result %}
-                <h4>Hasil Terformat:</h4>
-                <p>{{ formatted_result }}</p>
-            {% endif %}
-            
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+            <!-- Method Selection (Cipher Type) -->
+            <div class="form-group">
+                <label for="method">Pilih Metode Cipher:</label>
+                <select name="method" class="form-control">
+                    <option value="1" {% if selected_method == "1" %}selected{% endif %}>Vigenere Cipher</option>
+                    <option value="2" {% if selected_method == "2" %}selected{% endif %}>Playfair Cipher</option>
+                    <option value="3" {% if selected_method == "3" %}selected{% endif %}>Extended Vigenere Cipher</option>
+                    <option value="4" {% if selected_method == "4" %}selected{% endif %}>Affine Cipher</option>
+                    <option value="5" {% if selected_method == "5" %}selected{% endif %}>Hill Cipher</option>
+                    <option value="6" {% if selected_method == "6" %}selected{% endif %}>Vigenere Cipher AutoKey</option>
+                </select>                
+            </div>
+
+            <!-- Mode Selection (Encrypt/Decrypt) -->
+            <div class="form-group">
+                <label for="mode">Pilih Mode:</label>
+                <select name="mode" id="mode" class="form-control">
+                    <option value="encrypt" {% if selected_mode == "encrypt" %}selected{% endif %}>Enkripsi</option>
+                    <option value="decrypt" {% if selected_mode == "decrypt" %}selected{% endif %}>Dekripsi</option>
+                </select>
+            </div>
+
+            <!-- Input Text -->
+            <div class="form-group">
+                <label for="text">Masukkan Teks:</label>
+                <textarea name="text" id="text" class="form-control" rows="4">{{ entered_text or '' }}</textarea>
+            </div>
+
+            <!-- Input Key -->
+            <div class="form-group">
+                <label for="key">Masukkan Kunci:</label>
+                <input type="text" name="key" id="key" class="form-control" value="{{ entered_key or '' }}">
+            </div>
+
+            <!-- Format Option -->
+            <div class="form-group">
+                <label for="format">Pilih Format Hasil:</label>
+                <select name="format" id="format" class="form-control">
+                    <option value="none" {% if selected_format == "none" %}selected{% endif %}>Tanpa Formatting</option>
+                    <option value="no_spaces" {% if selected_format == "no_spaces" %}selected{% endif %}>Tanpa Spasi</option>
+                    <option value="groups" {% if selected_format == "groups" %}selected{% endif %}>Kelompok 5-huruf</option>
+                </select>
+            </div>
+
+            <!-- File Upload (Optional for Extended Vigenere Cipher) -->
+            <div class="form-group">
+                <label for="file">Unggah File (Hanya untuk Extended Vigenere Cipher):</label>
+                <input type="file" name="file" id="file" class="form-control">
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary">Proses</button>
+        </form>
+
+        <!-- Result Display -->
+        {% if result %}
+        <div class="mt-4">
+            <h3 class="section-header">Hasil:</h3>
+            <pre>{{ formatted_result or result }}</pre>
+
             {% if download_link %}
-                <a href="{{ download_link }}" class="download-link">Download Hasil</a>
+            <a href="{{ download_link }}" class="btn btn-success">Unduh File</a>
             {% endif %}
         </div>
-    {% endif %}
-    
-    {% if error %}
-        <div class="result error">
-            <h3>Error:</h3>
-            <p>{{ error }}</p>
-        </div>
-    {% endif %}
+        {% endif %}
+    </div>
+
+    <!-- Optional Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
