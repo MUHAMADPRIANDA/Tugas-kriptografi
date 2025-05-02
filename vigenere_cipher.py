@@ -1,3 +1,5 @@
+# vigenere_cipher.py
+
 import re
 
 def prepare_text(text):
@@ -7,7 +9,7 @@ def generate_key(plaintext, key):
     key = key.upper()
     return (key * (len(plaintext) // len(key))) + key[:len(plaintext) % len(key)]
 
-def enkripsi(plaintext, key):
+def encrypt(plaintext, key):  # ganti dari enkripsi
     plaintext = prepare_text(plaintext)
     key = generate_key(plaintext, key)
     ciphertext = ''
@@ -15,7 +17,7 @@ def enkripsi(plaintext, key):
         ciphertext += chr(((ord(p) - 65 + (ord(k) - 65)) % 26) + 65)
     return ciphertext
 
-def dekripsi(ciphertext, key):
+def decrypt(ciphertext, key):  # ganti dari dekripsi
     key = generate_key(ciphertext, key)
     plaintext = ''
     for c, k in zip(ciphertext, key):

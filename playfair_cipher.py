@@ -40,7 +40,7 @@ def siapkan_plaintext(teks):
                 i += 1
     return hasil
 
-def enkripsi(plaintext, kunci):
+def encrypt(plaintext, kunci):
     matriks = buat_matriks_kunci(kunci)
     pasangan = siapkan_plaintext(plaintext)
     hasil = ''
@@ -62,7 +62,7 @@ def enkripsi(plaintext, kunci):
 
     return hasil
 
-def dekripsi(ciphertext, kunci):
+def decrypt(ciphertext, kunci):
     matriks = buat_matriks_kunci(kunci)
     pasangan = [ciphertext[i:i+2] for i in range(0, len(ciphertext), 2)]
     hasil = ''

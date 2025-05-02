@@ -5,7 +5,7 @@ def extend_key(plaintext, key):
         key += plaintext[len(key)]
     return key
 
-def enkripsi(plaintext, key):
+def encrypt(plaintext, key):
     plaintext = plaintext.upper().replace(" ", "")
     key = extend_key(plaintext, key)
     cipher_text = ''
@@ -14,7 +14,7 @@ def enkripsi(plaintext, key):
         cipher_text += chr(total + 65)
     return cipher_text
 
-def dekripsi(ciphertext, key):
+def decrypt(ciphertext, key):
     ciphertext = ciphertext.upper().replace(" ", "")
     key = key.upper().replace(" ", "")
     plaintext = ''
