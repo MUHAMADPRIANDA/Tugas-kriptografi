@@ -1,6 +1,6 @@
 def buat_matriks_kunci(kunci):
-    abjad = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    kunci = kunci.upper().replace(" ", "")
+    abjad = "ABCDEFGHIKLMNOPQRSTUVWXYZ"  # Tanpa 'J'
+    kunci = kunci.upper().replace(" ", "").replace("J", "I")
     matriks = []
     sudah_digunakan = set()
 
@@ -20,24 +20,22 @@ def cari_posisi(matriks, huruf):
     return None, None
 
 def siapkan_plaintext(teks):
-    teks = teks.upper().replace(" ", "")
+    teks = teks.upper().replace(" ", "").replace("J", "I")
     hasil = []
     i = 0
     while i < len(teks):
         a = teks[i]
-        b = ''
         if i + 1 < len(teks):
-            b = teks[i+1]
-        if a == b:
-            hasil.append(a + 'X')
-            i += 1
-        else:
-            if b:
-                hasil.append(a + b)
-                i += 2
-            else:
+            b = teks[i + 1]
+            if a == b:
                 hasil.append(a + 'X')
                 i += 1
+            else:
+                hasil.append(a + b)
+                i += 2
+        else:
+            hasil.append(a + 'X')
+            i += 1
     return hasil
 
 def encrypt(plaintext, kunci):
@@ -50,13 +48,13 @@ def encrypt(plaintext, kunci):
         ax, ay = cari_posisi(matriks, a)
         bx, by = cari_posisi(matriks, b)
 
-        if ax == bx:
+        if ax == bx:  # Sama baris
             hasil += matriks[ax][(ay + 1) % 5]
             hasil += matriks[bx][(by + 1) % 5]
-        elif ay == by:
+        elif ay == by:  # Sama kolom
             hasil += matriks[(ax + 1) % 5][ay]
             hasil += matriks[(bx + 1) % 5][by]
-        else:
+        else:  # Bentuk persegi
             hasil += matriks[ax][by]
             hasil += matriks[bx][ay]
 
