@@ -1,8 +1,7 @@
 def extend_key(plaintext, key):
     key = key.upper().replace(" ", "")
     plaintext = plaintext.upper().replace(" ", "")
-    while len(key) < len(plaintext):
-        key += plaintext[len(key)]
+    key += plaintext[:len(plaintext) - len(key)]
     return key
 
 def encrypt(plaintext, key):
@@ -22,5 +21,5 @@ def decrypt(ciphertext, key):
         p = (ord(ciphertext[i]) - ord(key[i]) + 26) % 26
         char = chr(p + 65)
         plaintext += char
-        key += char
+        key += char  
     return plaintext

@@ -119,6 +119,15 @@ def index():
                 else:
                     result = hill_cipher.hill_decrypt(text, key)
 
+                # Simpan hasil ke file untuk diunduh
+                output_filename = f"{'encrypted' if mode == 'encrypt' else 'decrypted'}_{method}_result.txt"
+                output_path = os.path.join(OUTPUT_FOLDER, output_filename)
+                with open(output_path, "w", encoding="utf-8") as f:
+                    f.write(result)
+
+                download_link = f"/download/{output_filename}"
+
+
             elif method == "6":  # Vigenere Cipher AutoKey
                 if text:
                     text = ''.join(c for c in text.upper() if c.isalpha())  # Pastikan hanya huruf
