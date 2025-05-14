@@ -1,58 +1,75 @@
+import base64
+
 def encrypt_text(text, key):
     key_bytes = key.encode('utf-8')
     key_length = len(key_bytes)
     text_bytes = text.encode('utf-8')
-    result = bytearray()
     
+    encrypted_bytes = bytearray()
     for i, byte in enumerate(text_bytes):
         encrypted_byte = (byte + key_bytes[i % key_length]) % 256
-        result.append(encrypted_byte)
+        encrypted_bytes.append(encrypted_byte)
 
-    return result.decode('latin1') 
+    # Encode ke base64 agar aman ditampilkan sebagai teks
+    return base64.b64encode(encrypted_bytes).decode('utf-8')
 
-def decrypt_text(text, key):
+def decrypt_text(cipher_text, key):
+    try:
+        encrypted_bytes = base64.b64decode(cipher_text)
+    except Exception:
+        return "[ERROR] Format ciphertext tidak valid (bukan base64)."
+
     key_bytes = key.encode('utf-8')
     key_length = len(key_bytes)
-    text_bytes = text.encode('latin1')
-    result = bytearray()
-    
-    for i, byte in enumerate(text_bytes):
-        decrypted_byte = (byte - key_bytes[i % key_length]) % 256
-        result.append(decrypted_byte)
 
-    return result.decode('utf-8', errors='replace')
+    decrypted_bytes = bytearray()
+    for i, byte in enumerate(encrypted_bytes):
+        decrypted_byte = (byte - key_bytes[i % key_length]) % 256
+        decrypted_bytes.append(decrypted_byte)
+
+    return decrypted_bytes.decode('utf-8', errors='replace')
 
 def encrypt_file(input_file, output_file, key):
-    """Encrypts a file using Extended Vigenere Cipher."""
     key_bytes = key.encode('utf-8')
     key_length = len(key_bytes)
 
-    with open(input_file, "rb") as f:
-        file_data = f.read()
+    # Baca file dalam mode binary
+    with open(input_file, 'rb') as f:
+        data = f.read()
 
-    encrypted_data = bytearray()
-    for i, byte in enumerate(file_data):
-        encrypted_data.append((byte + key_bytes[i % key_length]) % 256)
+    encrypted_bytes = bytearray()
+    for i, byte in enumerate(data):
+        encrypted_byte = (byte + key_bytes[i % key_length]) % 256
+        encrypted_bytes.append(encrypted_byte)
 
-    with open(output_file, "wb") as f:
-        f.write(encrypted_data)
+    # Encode hasil enkripsi ke base64 agar aman disimpan sebagai teks
+    encoded_data = base64.b64encode(encrypted_bytes)
+
+    # Simpan hasil enkripsi ke file output
+    with open(output_file, 'wb') as f:
+        f.write(encoded_data)
 
 
 def decrypt_file(input_file, output_file, key):
-    """Decrypts a file using Extended Vigenere Cipher."""
     key_bytes = key.encode('utf-8')
     key_length = len(key_bytes)
 
-    with open(input_file, "rb") as f:
-        file_data = f.read()
+    # Baca file yang terenkripsi dalam mode binary
+    with open(input_file, 'rb') as f:
+        encoded_data = f.read()
 
-    decrypted_data = bytearray()
-    for i, byte in enumerate(file_data):
-        decrypted_data.append((byte - key_bytes[i % key_length]) % 256)
+    # Decode data Base64
+    try:
+        encrypted_bytes = base64.b64decode(encoded_data)
+    except Exception as e:
+        return f"[ERROR] Format file terenkripsi tidak valid: {str(e)}"
 
-    with open(output_file, "wb") as f:
-        f.write(decrypted_data)
+    decrypted_bytes = bytearray()
+    for i, byte in enumerate(encrypted_bytes):
+        decrypted_byte = (byte - key_bytes[i % key_length]) % 256
+        decrypted_bytes.append(decrypted_byte)
 
-
-# Optional additional functions to format text as specified in requirements
+    # Simpan hasil dekripsi ke file output
+    with open(output_file, 'wb') as f:
+        f.write(decrypted_bytes)
 
