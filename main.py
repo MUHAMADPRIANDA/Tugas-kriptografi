@@ -82,7 +82,6 @@ def index():
                     else:
                         result = extended_vigenere.decrypt_text(text, key)
 
-                    # Save result to file
                     output_filename = f"{'encrypted' if mode == 'encrypt' else 'decrypted'}_text.txt"
                     output_path = os.path.join(OUTPUT_FOLDER, output_filename)
 
@@ -91,7 +90,6 @@ def index():
 
                     download_link = f"/download/{output_filename}"
 
-                # Formatting
                 if format_option == "no_spaces":
                     formatted_result = format_without_spaces(result)
                 elif format_option == "groups":
