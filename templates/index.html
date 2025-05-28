@@ -5,227 +5,700 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enkripsi & Dekripsi Cipher</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            background: linear-gradient(to right, #e9f5ff, #ffffff);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 25px 70px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
-    
-        .container {
-            max-width: 860px;
-            margin: 60px auto;
-            padding: 40px;
-            background-color: #fff;
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e5e7eb;
+
+        body {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
-    
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 25px;
-            text-align: center;
-            color: #0d6efd;
-            font-weight: 700;
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
-    
-        label {
-            font-weight: 600;
-            font-size: 1rem;
-            color: #495057;
-            margin-bottom: 8px;
-            display: block;
-        }
-    
-        .form-control {
+
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            padding: 12px 14px;
-            border-radius: 8px;
-            border: 1px solid #ced4da;
-            background-color: #fdfdfe;
-            font-size: 1rem;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 20s infinite linear;
+        }
+
+        .shape:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            border-radius: 50%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            top: 60%;
+            right: 15%;
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(45deg, #48dbfb, #0abde3);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            animation-delay: 5s;
+        }
+
+        .shape:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #ff9ff3, #f368e0);
+            border-radius: 20px;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-30px) rotate(120deg); }
+            66% { transform: translateY(30px) rotate(240deg); }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .main-card:hover::before {
+            left: 100%;
+        }
+
+        .main-card:hover {
+            box-shadow: var(--hover-shadow);
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            text-align: center;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            position: relative;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.3)); }
+            to { filter: drop-shadow(0 0 20px rgba(118, 75, 162, 0.5)); }
+        }
+
+        .icon-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .icon-header i {
+            font-size: 4rem;
+            background: var(--success-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .form-section {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             transition: all 0.3s ease;
         }
-    
+
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #2c3e50;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        label i {
+            color: #667eea;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 15px;
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
         .form-control:focus {
-            border-color: #0d6efd;
-            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
             outline: none;
-            background-color: #fff;
+            background: #fff;
+            transform: translateY(-1px);
         }
-    
-        .form-group {
-            margin-bottom: 1.8rem;
+
+        .form-control:hover {
+            border-color: #764ba2;
+            transform: translateY(-1px);
         }
-    
+
         textarea.form-control {
-            min-height: 140px;
+            min-height: 150px;
             resize: vertical;
         }
-    
-        .btn-primary,
-        .btn-success {
-            padding: 14px 0;
-            font-size: 1.1rem;
-            font-weight: 600;
+
+        .btn-gradient {
+            padding: 18px 0;
+            font-size: 1.2rem;
+            font-weight: 700;
             width: 100%;
-            border-radius: 8px;
+            border-radius: 15px;
             border: none;
-            transition: background-color 0.3s ease, transform 0.1s ease;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
         }
-    
+
         .btn-primary {
-            background-color: #0d6efd;
+            background: var(--primary-gradient);
             color: #fff;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
         }
-    
+
         .btn-primary:hover {
-            background-color: #0b5ed7;
-            transform: scale(1.02);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
         }
-    
+
         .btn-success {
-            background-color: #198754;
+            background: var(--success-gradient);
             color: #fff;
+            box-shadow: 0 10px 30px rgba(75, 172, 254, 0.3);
         }
-    
+
         .btn-success:hover {
-            background-color: #157347;
-            transform: scale(1.02);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(75, 172, 254, 0.4);
         }
-    
+
+        .btn-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-gradient:hover::before {
+            left: 100%;
+        }
+
         .alert {
-            border-radius: 6px;
-            padding: 12px 18px;
-            font-size: 1rem;
+            border-radius: 15px;
+            padding: 20px 25px;
+            font-size: 1.1rem;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
         }
-    
-        pre {
-            background-color: #f1f3f5;
-            padding: 16px;
-            border-radius: 8px;
-            font-size: 1.05rem;
-            border: 1px solid #dee2e6;
-            white-space: pre-wrap;
-            word-wrap: break-word;
+
+        .alert-danger {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
         }
-    
+
+        .result-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .section-header {
             text-align: center;
-            margin-bottom: 24px;
-            font-size: 1.3rem;
-            color: #212529;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            color: #2c3e50;
+            position: relative;
         }
-    
-        /* Custom File Input */
-        .custom-file-input {
-            border-radius: 8px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border: 1px solid #ced4da;
+
+        .section-header::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: var(--primary-gradient);
+            margin: 10px auto;
+            border-radius: 2px;
         }
-    
+
+        pre {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 25px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        pre::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--success-gradient);
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px dashed #667eea;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-wrapper:hover {
+            border-color: #764ba2;
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+        }
+
+        .file-upload-wrapper input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-upload-label {
+            display: block;
+            cursor: pointer;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .loading-spinner {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(102, 126, 234, 0.3);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         @media (max-width: 768px) {
             .container {
-                padding: 20px;
-                margin-top: 30px;
-                border-radius: 12px;
+                padding: 0 15px;
+                margin: 20px auto;
             }
-    
+
+            .main-card {
+                padding: 25px;
+                border-radius: 20px;
+            }
+
             h1 {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
-    
-            .btn-primary, .btn-success {
-                font-size: 1rem;
+
+            .icon-header i {
+                font-size: 3rem;
             }
+
+            .form-section {
+                padding: 20px;
+            }
+
+            .btn-gradient {
+                font-size: 1.1rem;
+                padding: 15px 0;
+            }
+        }
+
+        /* Smooth transitions for all interactive elements */
+        * {
+            transition: all 0.3s ease;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-gradient);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-gradient);
         }
     </style>    
 </head>
 <body>
-    <div class="container">
-        <h1>Enkripsi & Dekripsi Cipher</h1>
-        
-        <!-- Error Message -->
-        {% if error %}
-        <div class="alert alert-danger" role="alert">
-            {{ error }}
-        </div>
-        {% endif %}
-
-        <form method="POST" enctype="multipart/form-data">
-            <!-- Method Selection (Cipher Type) -->
-            <div class="form-group">
-                <label for="method">Pilih Metode Cipher:</label>
-                <select name="method" class="form-control">
-                    <option value="1" {% if selected_method == "1" %}selected{% endif %}>Vigenere Cipher</option>
-                    <option value="2" {% if selected_method == "2" %}selected{% endif %}>Playfair Cipher</option>
-                    <option value="3" {% if selected_method == "3" %}selected{% endif %}>Extended Vigenere Cipher</option>
-                    <option value="4" {% if selected_method == "4" %}selected{% endif %}>Affine Cipher</option>
-                    <option value="5" {% if selected_method == "5" %}selected{% endif %}>Hill Cipher</option>
-                    <option value="6" {% if selected_method == "6" %}selected{% endif %}>Vigenere Cipher AutoKey</option>
-                </select>                
-            </div>
-
-            <!-- Mode Selection (Encrypt/Decrypt) -->
-            <div class="form-group">
-                <label for="mode">Pilih Mode:</label>
-                <select name="mode" id="mode" class="form-control">
-                    <option value="encrypt" {% if selected_mode == "encrypt" %}selected{% endif %}>Enkripsi</option>
-                    <option value="decrypt" {% if selected_mode == "decrypt" %}selected{% endif %}>Dekripsi</option>
-                </select>
-            </div>
-
-            <!-- Input Text -->
-            <div class="form-group">
-                <label for="text">Masukkan Teks:</label>
-                <textarea name="text" id="text" class="form-control" rows="4">{{ entered_text or '' }}</textarea>
-            </div>
-
-            <!-- Input Key -->
-            <div class="form-group">
-                <label for="key">Masukkan Kunci:</label>
-                <input type="text" name="key" id="key" class="form-control" value="{{ entered_key or '' }}">
-            </div>
-
-            <!-- Format Option -->
-            <div class="form-group">
-                <label for="format">Pilih Format Hasil:</label>
-                <select name="format" id="format" class="form-control">
-                    <option value="none" {% if selected_format == "none" %}selected{% endif %}>Tanpa Formatting</option>
-                    <option value="no_spaces" {% if selected_format == "no_spaces" %}selected{% endif %}>Tanpa Spasi</option>
-                    <option value="groups" {% if selected_format == "groups" %}selected{% endif %}>Kelompok 5-huruf</option>
-                </select>
-            </div>
-
-            <!-- File Upload (for Extended Vigenere Cipher) -->
-            <div class="form-group">
-                <label for="file">Unggah File (Hanya untuk Extended Vigenere Cipher):</label>
-                <input type="file" name="file" id="file" class="form-control">
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit" class="btn btn-primary">Proses</button>
-        </form>
-
-        <!-- Result Display -->
-        {% if result %}
-        <div class="mt-4">
-            <h3 class="section-header">Hasil:</h3>
-            <pre>{{ formatted_result or result }}</pre>
-
-            {% if download_link %}
-            <a href="{{ download_link }}" class="btn btn-success">Unduh File</a>
-            {% endif %}
-        </div>
-        {% endif %}
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
     </div>
 
-    <!-- Optional Bootstrap JS -->
+    <div class="container">
+        <div class="main-card">
+            <div class="icon-header">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h1>Enkripsi & Dekripsi Cipher</h1>
+            
+            <!-- Error Message -->
+            {% if error %}
+            <div class="alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" enctype="multipart/form-data" id="cipherForm">
+                <div class="form-section">
+                    <!-- Method Selection (Cipher Type) -->
+                    <div class="form-group">
+                        <label for="method">
+                            <i class="fas fa-cogs"></i>
+                            Pilih Metode Cipher:
+                        </label>
+                        <select name="method" id="method" class="form-control">
+                            <option value="1" {% if selected_method == "1" %}selected{% endif %}>🔐 Vigenere Cipher</option>
+                            <option value="2" {% if selected_method == "2" %}selected{% endif %}>🎲 Playfair Cipher</option>
+                            <option value="3" {% if selected_method == "3" %}selected{% endif %}>📁 Extended Vigenere Cipher</option>
+                            <option value="4" {% if selected_method == "4" %}selected{% endif %}>🔢 Affine Cipher</option>
+                            <option value="5" {% if selected_method == "5" %}selected{% endif %}>📊 Hill Cipher</option>
+                            <option value="6" {% if selected_method == "6" %}selected{% endif %}>🔑 Vigenere Cipher AutoKey</option>
+                        </select>                
+                    </div>
+
+                    <!-- Mode Selection (Encrypt/Decrypt) -->
+                    <div class="form-group">
+                        <label for="mode">
+                            <i class="fas fa-exchange-alt"></i>
+                            Pilih Mode:
+                        </label>
+                        <select name="mode" id="mode" class="form-control">
+                            <option value="encrypt" {% if selected_mode == "encrypt" %}selected{% endif %}>🔒 Enkripsi</option>
+                            <option value="decrypt" {% if selected_mode == "decrypt" %}selected{% endif %}>🔓 Dekripsi</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <!-- Input Text -->
+                    <div class="form-group">
+                        <label for="text">
+                            <i class="fas fa-edit"></i>
+                            Masukkan Teks:
+                        </label>
+                        <textarea name="text" id="text" class="form-control" rows="4" placeholder="Ketik atau paste teks Anda di sini...">{{ entered_text or '' }}</textarea>
+                    </div>
+
+                    <!-- Input Key -->
+                    <div class="form-group">
+                        <label for="key">
+                            <i class="fas fa-key"></i>
+                            Masukkan Kunci:
+                        </label>
+                        <input type="text" name="key" id="key" class="form-control" placeholder="Masukkan kunci enkripsi..." value="{{ entered_key or '' }}">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <!-- Format Option -->
+                    <div class="form-group">
+                        <label for="format">
+                            <i class="fas fa-text-width"></i>
+                            Pilih Format Hasil:
+                        </label>
+                        <select name="format" id="format" class="form-control">
+                            <option value="none" {% if selected_format == "none" %}selected{% endif %}>📝 Tanpa Formatting</option>
+                            <option value="no_spaces" {% if selected_format == "no_spaces" %}selected{% endif %}>🚫 Tanpa Spasi</option>
+                            <option value="groups" {% if selected_format == "groups" %}selected{% endif %}>📋 Kelompok 5-huruf</option>
+                        </select>
+                    </div>
+
+                    <!-- File Upload (for Extended Vigenere Cipher) -->
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-upload"></i>
+                            Unggah File (Hanya untuk Extended Vigenere Cipher):
+                        </label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" name="file" id="file" accept="*/*">
+                            <label for="file" class="file-upload-label">
+                                <i class="fas fa-cloud-upload-alt fa-2x"></i><br>
+                                Klik untuk memilih file atau drag & drop
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div class="loading-spinner" id="loadingSpinner">
+                    <div class="spinner"></div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary btn-gradient" id="submitBtn">
+                    <i class="fas fa-play"></i>
+                    Proses Cipher
+                </button>
+            </form>
+
+            <!-- Result Display -->
+            {% if result %}
+            <div class="result-section">
+                <h3 class="section-header">
+                    <i class="fas fa-check-circle"></i>
+                    Hasil Cipher
+                </h3>
+                <pre>{{ formatted_result or result }}</pre>
+
+                {% if download_link %}
+                <a href="{{ download_link }}" class="btn btn-success btn-gradient">
+                    <i class="fas fa-download"></i>
+                    Unduh File Hasil
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Form submission with loading animation
+        document.getElementById('cipherForm').addEventListener('submit', function() {
+            document.getElementById('loadingSpinner').style.display = 'flex';
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+        });
+
+        // File upload visual feedback
+        document.getElementById('file').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || 'Tidak ada file dipilih';
+            const label = document.querySelector('.file-upload-label');
+            if (e.target.files[0]) {
+                label.innerHTML = `<i class="fas fa-file-alt fa-2x"></i><br>File terpilih: ${fileName}`;
+                label.style.color = '#28a745';
+            }
+        });
+
+        // Method selection visual feedback
+        document.getElementById('method').addEventListener('change', function() {
+            const fileSection = document.querySelector('.file-upload-wrapper').parentElement;
+            if (this.value === '3') { // Extended Vigenere
+                fileSection.style.display = 'block';
+                fileSection.style.animation = 'slideInUp 0.3s ease-out';
+            } else {
+                fileSection.style.display = 'none';
+            }
+        });
+
+        // Initialize file section visibility
+        document.addEventListener('DOMContentLoaded', function() {
+            const methodSelect = document.getElementById('method');
+            const fileSection = document.querySelector('.file-upload-wrapper').parentElement;
+            if (methodSelect.value !== '3') {
+                fileSection.style.display = 'none';
+            }
+        });
+
+        // Smooth scroll to result
+        {% if result %}
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                document.querySelector('.result-section').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }, 300);
+        });
+        {% endif %}
+
+        // interactive effects
+        document.querySelectorAll('.form-control').forEach(element => {
+            element.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            element.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Drag and drop functionality for file upload
+        const fileUploadWrapper = document.querySelector('.file-upload-wrapper');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileUploadWrapper.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileUploadWrapper.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileUploadWrapper.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            fileUploadWrapper.style.borderColor = '#28a745';
+            fileUploadWrapper.style.backgroundColor = 'rgba(40, 167, 69, 0.1)';
+        }
+
+        function unhighlight(e) {
+            fileUploadWrapper.style.borderColor = '#667eea';
+            fileUploadWrapper.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+        }
+
+        fileUploadWrapper.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            document.getElementById('file').files = files;
+            
+            if (files.length > 0) {
+                const fileName = files[0].name;
+                const label = document.querySelector('.file-upload-label');
+                label.innerHTML = `<i class="fas fa-file-alt fa-2x"></i><br>File terpilih: ${fileName}`;
+                label.style.color = '#28a745';
+            }
+        }
+    </script>
 </body>
 </html>
