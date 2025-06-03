@@ -52,7 +52,3 @@ def decrypt_file(input_file, output_file, key):
 
     with open(output_file, "wb") as f:
         f.write(decrypted_data)
-
-
-# Optional additional functions to format text as specified in requirements
-

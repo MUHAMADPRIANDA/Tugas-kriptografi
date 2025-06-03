@@ -1,11 +1,11 @@
-from flask import Flask, render_template, request, send_file, Response
+from flask import Flask, render_template, request, send_file
 import os
 import extended_vigenere
 import vigenere_cipher
 import playfair_cipher
 import affine_cipher
 import hill_cipher
-import vigenere_cipher_auto_key  # Menambahkan import untuk Vigenere Cipher AutoKey
+import vigenere_cipher_auto_key  # AutoKey Vigenere
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
@@ -46,42 +46,36 @@ def index():
         selected_format = format_option
 
         try:
+            # Function to process file if available
+            def process_file(file, mode, key):
+                filename = file.filename
+                input_path = os.path.join(UPLOAD_FOLDER, filename)
+                file.save(input_path)
+
+                output_filename = f"{'encrypted' if mode == 'encrypt' else 'decrypted'}_{filename}"
+                output_path = os.path.join(OUTPUT_FOLDER, output_filename)
+
+                if mode == "encrypt":
+                    extended_vigenere.encrypt_file(input_path, output_path, key)
+                else:
+                    extended_vigenere.decrypt_file(input_path, output_path, key)
+
+                return f"/download/{output_filename}", f"File processed successfully. Click to download."
+
             if method == "1":  # Vigenere Cipher
                 if text:
                     text = ''.join(c for c in text.upper() if c.isalpha())
-
-                if mode == "encrypt":
-                    result = vigenere_cipher.encrypt(text, key)
-                else:
-                    result = vigenere_cipher.decrypt(text, key)
+                result = vigenere_cipher.encrypt(text, key) if mode == "encrypt" else vigenere_cipher.decrypt(text, key)
 
             elif method == "2":  # Playfair Cipher
                 if text:
                     text = ''.join(c for c in text.upper() if c.isalpha())
-
-                if mode == "encrypt":
-                    result = playfair_cipher.encrypt(text, key)
-                else:
-                    result = playfair_cipher.decrypt(text, key)
+                result = playfair_cipher.encrypt(text, key) if mode == "encrypt" else playfair_cipher.decrypt(text, key)
 
             elif method == "3":  # Extended Vigenere Cipher
                 if "file" in request.files and request.files["file"].filename != "":
                     file = request.files["file"]
-                    filename = file.filename
-                    input_path = os.path.join(UPLOAD_FOLDER, filename)
-                    file.save(input_path)
-
-                    output_filename = f"{'encrypted' if mode == 'encrypt' else 'decrypted'}_{filename}"
-                    output_path = os.path.join(OUTPUT_FOLDER, output_filename)
-
-                    if mode == "encrypt":
-                        extended_vigenere.encrypt_file(input_path, output_path, key)
-                    else:
-                        extended_vigenere.decrypt_file(input_path, output_path, key)
-
-                    download_link = f"/download/{output_filename}"
-                    result = f"File processed successfully. Click to download."
-
+                    download_link, result = process_file(file, mode, key)
                 elif text:
                     if mode == "encrypt":
                         result = extended_vigenere.encrypt_text(text, key)
@@ -90,21 +84,23 @@ def index():
 
                     output_filename = f"{'encrypted' if mode == 'encrypt' else 'decrypted'}_text.txt"
                     output_path = os.path.join(OUTPUT_FOLDER, output_filename)
-                    with open(output_path, "w", encoding="latin1") as f:
+
+                    with open(output_path, "w", encoding="utf-8") as f:
                         f.write(result)
 
                     download_link = f"/download/{output_filename}"
 
+                if format_option == "no_spaces":
+                    formatted_result = format_without_spaces(result)
+                elif format_option == "groups":
+                    formatted_result = format_in_groups(result)
+
             elif method == "4":  # Affine Cipher
                 if text:
                     text = ''.join(c for c in text.upper() if c.isalpha())
-
                 try:
                     a, b = map(int, key.split(","))
-                    if mode == "encrypt":
-                        result = affine_cipher.affine_encrypt(text, a, b)
-                    else:
-                        result = affine_cipher.affine_decrypt(text, a, b)
+                    result = affine_cipher.affine_encrypt(text, a, b) if mode == "encrypt" else affine_cipher.affine_decrypt(text, a, b)
                 except ValueError:
                     error = "Format kunci tidak valid. Format kunci harus a,b"
 
@@ -114,33 +110,24 @@ def index():
 
                 if len(key) != 4:
                     error = "Kunci Hill Cipher harus 4 huruf."
-                elif mode == "encrypt":
-                    result = hill_cipher.hill_encrypt(text, key)
                 else:
-                    result = hill_cipher.hill_decrypt(text, key)
+                    result = hill_cipher.hill_encrypt(text, key) if mode == "encrypt" else hill_cipher.hill_decrypt(text, key)
 
-                # Simpan hasil ke file untuk diunduh
-                output_filename = f"{'encrypted' if mode == 'encrypt' else 'decrypted'}_{method}_result.txt"
-                output_path = os.path.join(OUTPUT_FOLDER, output_filename)
-                with open(output_path, "w", encoding="utf-8") as f:
-                    f.write(result)
-
-                download_link = f"/download/{output_filename}"
-
+                    output_filename = f"{'encrypted' if mode == 'encrypt' else 'decrypted'}_{method}_result.txt"
+                    output_path = os.path.join(OUTPUT_FOLDER, output_filename)
+                    with open(output_path, "w", encoding="utf-8") as f:
+                        f.write(result)
+                    download_link = f"/download/{output_filename}"
 
             elif method == "6":  # Vigenere Cipher AutoKey
                 if text:
-                    text = ''.join(c for c in text.upper() if c.isalpha())  # Pastikan hanya huruf
-
-                if mode == "encrypt":
-                    result = vigenere_cipher_auto_key.encrypt(text, key)
-                else:
-                    result = vigenere_cipher_auto_key.decrypt(text, key)
+                    text = ''.join(c for c in text.upper() if c.isalpha())
+                result = vigenere_cipher_auto_key.encrypt(text, key) if mode == "encrypt" else vigenere_cipher_auto_key.decrypt(text, key)
 
             else:
                 error = "Metode tidak valid."
 
-            if result and not download_link:
+            if result and text:
                 if format_option == "no_spaces":
                     formatted_result = format_without_spaces(result)
                 elif format_option == "groups":
